@@ -7,6 +7,9 @@ import (
 
 type Authenticator interface {
 	Authenticate(ctx context.Context) (token *oauth2.Token, err error)
+}
+
+type Verifier interface {
 	UserInfo(ctx context.Context, token *oauth2.Token) (userInfo UserInfo, err error)
 }
 

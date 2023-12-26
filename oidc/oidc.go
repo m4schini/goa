@@ -1,9 +1,6 @@
 package oidc
 
 import (
-	"context"
-	"github.com/coreos/go-oidc/v3/oidc"
-	"github.com/m4schini/goa"
 	"golang.org/x/oauth2"
 )
 
@@ -40,25 +37,4 @@ type IDTokenClaims struct {
 	GivenName         string `json:"given_name"`
 	FamilyName        string `json:"family_name"`
 	Email             string `json:"email"`
-}
-
-func UserInfo(ctx context.Context, token *oauth2.Token, config Config) (userInfo goa.UserInfo, err error) {
-	provider, err := oidc.NewProvider(ctx, config.Url)
-	if err != nil {
-		return userInfo, err
-	}
-	user, err := provider.UserInfo(ctx, &PseudoTokenSource{token: token})
-	if err != nil {
-		return userInfo, err
-	}
-	err = user.Claims(&userInfo)
-	return userInfo, err
-}
-
-type PseudoTokenSource struct {
-	token *oauth2.Token
-}
-
-func (p *PseudoTokenSource) Token() (*oauth2.Token, error) {
-	return p.token, nil
 }
