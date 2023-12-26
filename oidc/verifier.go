@@ -5,6 +5,7 @@ import (
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/m4schini/goa"
 	"golang.org/x/oauth2"
+	"time"
 )
 
 type oidcVerifier struct {
@@ -32,4 +33,14 @@ func UserInfo(ctx context.Context, token *oauth2.Token, config Config) (userInfo
 	}
 	err = user.Claims(&userInfo)
 	return userInfo, err
+}
+
+func Verify(accessToken string, verifier goa.Verifier) (goa.UserInfo, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	token := &oauth2.Token{
+		AccessToken: accessToken,
+		TokenType:   "Bearer",
+	}
+	return verifier.UserInfo(ctx, token)
 }

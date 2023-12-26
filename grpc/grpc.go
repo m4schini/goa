@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/m4schini/goa"
-	"golang.org/x/oauth2"
+	"github.com/m4schini/goa/oidc"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -17,11 +17,5 @@ func VerifyContext(ctx context.Context, verifier goa.Verifier) (info goa.UserInf
 	if len(tokens) != 1 {
 		return nil, fmt.Errorf("token is missing")
 	}
-	token := &oauth2.Token{
-		AccessToken: tokens[0],
-		TokenType:   "Bearer",
-	}
-
-	// returns err of unauthorized
-	return verifier.UserInfo(ctx, token)
+	return oidc.Verify(tokens[0], verifier)
 }
